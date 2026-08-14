@@ -1,0 +1,35 @@
+name: CI - Python Tests
+
+# Déclenche le workflow à chaque push ou Pull Request sur la branche principale
+on:
+  push:
+    branches: [ "main", "master" ]
+  pull_request:
+    branches: [ "main", "master" ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Récupération du code source
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2. Configuration de l'environnement Python
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+        cache: 'pip' # Accélère les exécutions futures en mettant pip en cache
+
+    # 3. Installation des dépendances
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+    # 4. Exécution de la suite de tests avec Pytest
+    - name: Run tests with pytest
+      run: |
+        pytest -v

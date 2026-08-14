@@ -1,0 +1,11 @@
+# Pipeline de Streaming Kafka
+confluent-kafka>=2.4.0
+
+# Ingestion de l'API Grand Lyon
+requests==2.31.0
+
+# Connexion à la base de données PostgreSQL / PostGIS
+psycopg2-binary
+
+# Tests unitaires
+pytest==8.0.0
