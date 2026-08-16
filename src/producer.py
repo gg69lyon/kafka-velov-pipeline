@@ -44,7 +44,6 @@ def main():
             print(f"\nRécupération de {len(stations)} stations Vélo'v (Lyon)...")
 
             for station in stations:
-                print(station)
                 # Structuration des données au format JSON
                 payload = {
                     "station_number": station.get("number"),
@@ -60,8 +59,6 @@ def main():
                     "availability_code": station.get("availability"),
                     "timestamp": time.time()
                 }
-
-                print(f"Payload: {payload}")
 
                 # La clé de partitionnement = le numéro de station (ex: "10001")
                 key = str(payload["station_number"])

@@ -35,12 +35,11 @@ def create_alert_payload(station_data, alert_type, alert_message):
 def process_station_data(station):
     """Applique les règles métier sur les données d'une station et renvoie un payload d'alerte ou None."""
     station_name = station.get("name", "Inconnue")
-    print("station name", station_name)
+
     status = station.get("status", "OPEN")
     bikes = station.get("bikes_available", 0)
     docks = station.get("docks_available", 0)
     print(f"Status: {status}")
-
  
     print(f"Bikes: {bikes}, Docks: {docks}")
 
@@ -109,7 +108,6 @@ def main():
 
             try:
                 station = json.loads(msg.value().decode('utf-8'))
-                print('station', station)
             except Exception as e:
                 print(f"Impossible de décoder le JSON : {e}")
                 continue
