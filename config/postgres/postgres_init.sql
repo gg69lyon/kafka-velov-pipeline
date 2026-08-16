@@ -1,21 +1,25 @@
--- Activation de l'extension PostGIS
+-- Active l'extension PostGIS pour la gestion de la géolocalisation
 CREATE EXTENSION IF NOT EXISTS postgis;
 
--- Création de la table avec type de données géospatial
+-- Crée la table des alertes si elle n'existe pas déjà
 CREATE TABLE IF NOT EXISTS velov_station_alerts (
-    alert_id VARCHAR(255) PRIMARY KEY,
-    alert_type VARCHAR(50) NOT NULL,
-    alert_message TEXT NOT NULL,
+    id SERIAL PRIMARY KEY,
+    alert_id VARCHAR(100) UNIQUE NOT NULL,
+    alert_type VARCHAR(100) NOT NULL,
+    alert_message TEXT,
     station_number INT NOT NULL,
-    name VARCHAR(255),
+    name VARCHAR(255) NOT NULL,
     commune VARCHAR(255),
+    status VARCHAR(50),
     bikes_available INT,
     docks_available INT,
-    lat FLOAT,
-    lng FLOAT,
-    geom GEOMETRY(Point, 4326),  -- Colonne géospatiale (SRID 4326 = WGS 84)
-    processed_at DOUBLE PRECISION NOT NULL
+    lat DOUBLE PRECISION,
+    lng DOUBLE PRECISION,
+    geom GEOMETRY(Point, 4326),
+    processed_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Index spatial pour optimiser les requêtes géographiques
+-- Crée les index spatiaux et temporels
 CREATE INDEX IF NOT EXISTS idx_velov_alerts_geom ON velov_station_alerts USING GIST (geom);
+CREATE INDEX IF NOT EXISTS idx_velov_alerts_created_at ON velov_station_alerts (created_at);

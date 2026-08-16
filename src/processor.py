@@ -16,7 +16,7 @@ def delivery_report(err, msg):
 
 def create_alert_payload(station_data, alert_type, alert_message):
     """Enrichit le message original avec des informations d'alerte."""
-    return {
+    alert_message = {
         "alert_id": f"{station_data.get('station_number')}_{int(time.time())}",
         "alert_type": alert_type,  # 'EMPTY_STATION', 'LOW_STOCK' ou 'FULL_STATION'
         "alert_message": alert_message,
@@ -29,13 +29,20 @@ def create_alert_payload(station_data, alert_type, alert_message):
         "lng": station_data.get("lng"),
         "processed_at": time.time()
     }
+    print(f"Alerte créée: {alert_message}")
+    return alert_message
 
 def process_station_data(station):
     """Applique les règles métier sur les données d'une station et renvoie un payload d'alerte ou None."""
     station_name = station.get("name", "Inconnue")
+    print("station name", station_name)
+    status = station.get("status", "OPEN")
     bikes = station.get("bikes_available", 0)
     docks = station.get("docks_available", 0)
-    status = station.get("status", "OPEN")
+    print(f"Status: {status}")
+
+ 
+    print(f"Bikes: {bikes}, Docks: {docks}")
 
     # Ne traiter que les stations ouvertes
     if status != "OPEN":
@@ -50,7 +57,7 @@ def process_station_data(station):
         )
     
     # Règle 2 : Stock faible
-    elif bikes <= 15:
+    elif bikes <= 2:
         return create_alert_payload(
             station,
             alert_type="LOW_STOCK",
@@ -82,6 +89,7 @@ def main():
         'client.id': 'velov-alert-producer'
     }
     producer = Producer(producer_config)
+    print(f"Producer config: {producer_config}")
 
     print(f"[Stream Processor] Écoute du topic '{INPUT_TOPIC}'...")
     print(f"Les alertes seront redirigées vers '{OUTPUT_TOPIC}'...\n")
@@ -101,6 +109,7 @@ def main():
 
             try:
                 station = json.loads(msg.value().decode('utf-8'))
+                print('station', station)
             except Exception as e:
                 print(f"Impossible de décoder le JSON : {e}")
                 continue
